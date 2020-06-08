@@ -1,0 +1,14 @@
+C:\Users\Walks\source\repos\Connect 4\bin\Debug\Connect 4.exe.config
+C:\Users\Walks\source\repos\Connect 4\bin\Debug\Connect 4.exe
+C:\Users\Walks\source\repos\Connect 4\bin\Debug\Connect 4.pdb
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.csprojAssemblyReference.cache
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\MainWindow.g.cs
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\App.g.cs
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4_MarkupCompile.cache
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4_MarkupCompile.lref
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\MainWindow.baml
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.g.resources
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect_4.Properties.Resources.resources
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.csproj.GenerateResource.cache
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.exe
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.pdb
