@@ -40,6 +40,11 @@ namespace Connect_4
             NewGame();
         }
 
+        #endregion
+
+        /// <summary>
+        /// Setup a new game
+        /// </summary>
         private void NewGame()
         {
             // Create a new 2D array of free cells
@@ -70,6 +75,11 @@ namespace Connect_4
             mGameEnded = false;
         }
 
+        /// <summary>
+        /// Button click event from grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             // Start a new game if game has ended
@@ -100,7 +110,8 @@ namespace Connect_4
                     CellToFill.Background = mPlayer1Turn ? Brushes.Red : Brushes.Yellow;
 
                     // Toggle turn
-                    mPlayer1Turn = !mPlayer1Turn;
+                    if (mGameType == GameTypes.PlayerVersusPlayer)
+                        mPlayer1Turn = !mPlayer1Turn;
 
                     // Check for a winner
                     var Winner = CheckForWinner(mCellTypes);
@@ -114,11 +125,46 @@ namespace Connect_4
                         mGameEnded = true;
                     }
 
+                    if (mGameType == GameTypes.PlayerVersusAI)
+                    {
+                        Move bestMove = new Move
+                        {
+                            col = -1,
+                            row = -1
+                        };
+
+                        MiniMax(mCellTypes, 5, true, bestMove);
+
+                        if (bestMove.col != -1 && bestMove.row != -1)
+                        {
+                            mCellTypes[bestMove.row, bestMove.col] = CellTypes.Yellow;
+                            var AICell = Container.Children.Cast<Button>().First(AIButtonToMove => Grid.GetRow(AIButtonToMove) == bestMove.row && Grid.GetColumn(AIButtonToMove) == bestMove.col);
+                            AICell.Background = Brushes.Yellow;
+
+                            // Check for a winner
+                            Winner = CheckForWinner(mCellTypes);
+
+                            if (Winner == CellTypes.Red)
+                            {
+                                mGameEnded = true;
+                            }
+                            else if (Winner == CellTypes.Yellow)
+                            {
+                                mGameEnded = true;
+                            }
+                        }
+                    }
+
                     return;
                 }
             }
         }
 
+        /// <summary>
+        /// Checks a given board for a winner and returns the CellTypes if one is found
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         private CellTypes CheckForWinner(CellTypes[,] board)
         {
             // Horizontal check
@@ -207,6 +253,106 @@ namespace Connect_4
             // Start a new game
             NewGame();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            NewGame();
+        }
+
+        /// <summary>
+        /// Minimax algorithm used to determine best move
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="depth"></param>
+        /// <param name="isMax"></param>
+        /// <returns></returns>
+        private int MiniMax(CellTypes[,] board, int depth, bool isMax, Move bestMove, int Alpha = int.MinValue, int Beta = int.MaxValue)
+        {
+            var winner = CheckForWinner(board);
+
+            if (depth == 0 || winner != CellTypes.Free)
+            {
+                if (winner == CellTypes.Yellow)
+                    return int.MaxValue;
+                else if (winner == CellTypes.Red)
+                    return int.MinValue;
+                else
+                    return 0;
+            }
+
+            if (isMax)
+            {
+                int maxValue = int.MinValue;
+
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    for (int i = board.GetLength(0) - 1; i >= 0; i--)
+                    {
+                        if (board[i, j] != CellTypes.Free)
+                            continue;
+
+                        board[i, j] = CellTypes.Yellow;
+
+                        int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
+
+                        if (newScore > maxValue)
+                        {
+                            maxValue = newScore;
+                            bestMove.row = i;
+                            bestMove.col = j;
+                        }
+
+                        board[i, j] = CellTypes.Free;
+
+                        // If best move is optimal then return it (alpha-beta pruning)
+                        if (maxValue >= Beta)
+                            return maxValue;
+
+                        if (maxValue > Alpha)
+                            Alpha = maxValue;
+
+                        break;
+                    }
+                }
+
+                return maxValue;
+            }
+            else
+            {
+                int minValue = int.MaxValue;
+
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    for (int i = board.GetLength(0) - 1; i > 0; i--)
+                    {
+                        if (board[i, j] != CellTypes.Free)
+                            continue;
+
+                        board[i, j] = CellTypes.Red;
+
+                        int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
+
+                        if (newScore < minValue)
+                        {
+                            minValue = newScore;
+                            bestMove.row = i;
+                            bestMove.col = j;
+                        }
+
+                        board[i, j] = CellTypes.Free;
+
+                        if (minValue <= Alpha)
+                            return minValue;
+
+                        if (minValue < Beta)
+                            Beta = minValue;
+
+                        break;
+                    }
+                }
+
+                return minValue;
+            }
+        }
     }
-    #endregion
 }

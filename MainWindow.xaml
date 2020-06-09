@@ -78,5 +78,6 @@
             <ComboBoxItem Content="Player versus AI"/>
             <ComboBoxItem Content="AI versus AI"/>
         </ComboBox>
+        <Button Content="New Game" VerticalAlignment="Bottom" Margin="510,2,10,5" Click="Button_Click_1"/>
     </Grid>
 </Window>
