@@ -119,13 +119,15 @@ namespace Connect_4
                     if (Winner == CellTypes.Red)
                     {
                         mGameEnded = true;
+                        MessageBox.Show("Red has won!");
                     }
                     else if (Winner == CellTypes.Yellow)
                     {
                         mGameEnded = true;
+                        MessageBox.Show("Yellow has won!");
                     }
 
-                    if (mGameType == GameTypes.PlayerVersusAI)
+                    if (mGameType == GameTypes.PlayerVersusAI && !mGameEnded)
                     {
                         Move bestMove = new Move
                         {
@@ -147,10 +149,12 @@ namespace Connect_4
                             if (Winner == CellTypes.Red)
                             {
                                 mGameEnded = true;
+                                MessageBox.Show("Red has won!");
                             }
                             else if (Winner == CellTypes.Yellow)
                             {
                                 mGameEnded = true;
+                                MessageBox.Show("Yellow has won!");
                             }
                         }
                     }
@@ -266,7 +270,7 @@ namespace Connect_4
         /// <param name="depth"></param>
         /// <param name="isMax"></param>
         /// <returns></returns>
-        private int MiniMax(CellTypes[,] board, int depth, bool isMax, Move bestMove, int Alpha = int.MinValue, int Beta = int.MaxValue)
+        private int MiniMax(CellTypes[,] board, int depth, bool isMax, Move bestMove, int alpha = int.MinValue, int beta = int.MaxValue)
         {
             var winner = CheckForWinner(board);
 
@@ -293,6 +297,8 @@ namespace Connect_4
 
                         board[i, j] = CellTypes.Yellow;
 
+                        //maxValue = Math.Max(maxValue, MiniMax(board, depth - 1, !isMax, bestMove));
+
                         int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
 
                         if (newScore > maxValue)
@@ -304,12 +310,11 @@ namespace Connect_4
 
                         board[i, j] = CellTypes.Free;
 
-                        // If best move is optimal then return it (alpha-beta pruning)
-                        if (maxValue >= Beta)
+                        if (maxValue >= beta)
                             return maxValue;
 
-                        if (maxValue > Alpha)
-                            Alpha = maxValue;
+                        if (maxValue > alpha)
+                            alpha = maxValue;
 
                         break;
                     }
@@ -323,12 +328,14 @@ namespace Connect_4
 
                 for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    for (int i = board.GetLength(0) - 1; i > 0; i--)
+                    for (int i = board.GetLength(0) - 1; i >= 0; i--)
                     {
                         if (board[i, j] != CellTypes.Free)
                             continue;
 
                         board[i, j] = CellTypes.Red;
+
+                        //minValue = Math.Min(minValue, MiniMax(board, depth - 1, !isMax, bestMove));
 
                         int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
 
@@ -341,11 +348,11 @@ namespace Connect_4
 
                         board[i, j] = CellTypes.Free;
 
-                        if (minValue <= Alpha)
+                        if (minValue <= alpha)
                             return minValue;
 
-                        if (minValue < Beta)
-                            Beta = minValue;
+                        if (minValue < beta)
+                            beta = minValue;
 
                         break;
                     }
