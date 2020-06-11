@@ -153,8 +153,8 @@ namespace Connect_4
 
         private int FindBestColumn(CellTypes[,] board)
         {
-            int bestVal = -10;
-            List<int> bestCol = new List<int>{ };
+            int bestVal = int.MinValue;
+            int bestCol = -1;
 
             for (int col = 0; col < board.GetLength(1); col++)
             {
@@ -162,23 +162,18 @@ namespace Connect_4
                     continue;
 
                 int moveVal = MiniMax(board, 2, true);
+                //int moveVal = EvalutateBoard(board, CellTypes.Yellow);
 
                 RemoveTopCoin(board, col);
 
                 if (moveVal > bestVal)
                 {
-                    bestCol.Clear();
-                    bestCol.Add(col);
+                    bestCol = col;
                     bestVal = moveVal;
-                }
-                else if (moveVal == bestVal)
-                {
-                    if (!bestCol.Contains(col))
-                        bestCol.Add(col);
                 }
             }
 
-            return bestCol[random.Next(bestCol.Count)];
+            return bestCol;
         }
 
 
@@ -345,9 +340,9 @@ namespace Connect_4
         /// <returns></returns>
         private int MiniMax(CellTypes[,] board, int depth, bool isMax, int alpha = -100, int beta = 100)
         {
-            int score = EvalutateBoard(board);
+            int score = EvalutateBoard(board, CellTypes.Yellow);
 
-            if (depth == 0 || score == 100 || score == -100)
+            if (depth == 0 || score == int.MaxValue || score == int.MinValue)
             {
                 return score;
             }
@@ -401,31 +396,39 @@ namespace Connect_4
         /// </summary>
         /// <param name="board"></param>
         /// <returns></returns>
-        private int EvalutateBoard(CellTypes[,] board)
+        private int EvalutateBoard(CellTypes[,] board, CellTypes player)
         {
+            int score = 0;
+
+            // Score centre column
+            for (int i = 0; i < board.GetLength(0) - 3; i++)
+            {
+                var centerCol = new List<CellTypes>();
+
+                centerCol.Add(board[i, 3]);
+                centerCol.Add(board[i + 1, 3]);
+                centerCol.Add(board[i + 2, 3]);
+                centerCol.Add(board[i + 3, 3]);
+
+                int centerCount = centerCol.Count(x => x == player);
+                score += centerCount * 3;
+            }
+
+
             // Horizontal check
             for (int i = 0; i < board.GetLength(0); i++)
             {
                 for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
-                    var player = board[i, j];
-                    if (player == CellTypes.Free)
-                        continue;
-
-                    if (board[i, j] == player && board[i, j + 1] == player)
+                    var window = new List<CellTypes>
                     {
-                        int hCount = 2;
-                        if (board[i, j + 2] == player)
-                        {
-                            hCount++;
-                            if (board[i, j + 3] == player)
-                                hCount = 100;
-                        }
-                        return player == CellTypes.Yellow ? hCount : -hCount;
-                    }
+                        board[i, j],
+                        board[i, j + 1],
+                        board[i, j + 2],
+                        board[i, j + 3]
+                    };
 
-                    //if (board[i, j] == player && board[i, j + 1] == player && board[i, j + 2] == player && board[i, j + 3] == player)
-                    //return player == CellTypes.Yellow ? 10 : -10;
+                    score += EvaluateWindow(board, player, window);
                 }
             }
 
@@ -434,24 +437,15 @@ namespace Connect_4
             {
                 for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    var player = board[i, j];
-                    if (player == CellTypes.Free)
-                        continue;
-
-                    if (board[i, j] == player && board[i + 1, j] == player)
+                    var window = new List<CellTypes>
                     {
-                        int vCount = 2;
-                        if (board[i + 2, j] == player)
-                        {
-                            vCount++;
-                            if (board[i + 3, j] == player)
-                                vCount = 100;
-                        }
-                        return player == CellTypes.Yellow ? vCount : -vCount;
-                    }
+                        board[i, j],
+                        board[i + 1, j],
+                        board[i + 2, j],
+                        board[i + 3, j]
+                    };
 
-                    //if (board[i, j] == player && board[i + 1, j] == player && board[i + 2, j] == player && board[i + 3, j] == player)
-                    //return player == CellTypes.Yellow ? 10 : -10;
+                    score += EvaluateWindow(board, player, window);
                 }
             }
 
@@ -460,24 +454,15 @@ namespace Connect_4
             {
                 for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
-                    var player = board[i, j];
-                    if (player == CellTypes.Free)
-                        continue;
-
-                    if (board[i, j] == player && board[i - 1, j + 1] == player)
+                    var window = new List<CellTypes>
                     {
-                        int adCount = 2;
-                        if (board[i - 2, j + 2] == player)
-                        {
-                            adCount++;
-                            if (board[i - 3, j + 3] == player)
-                                adCount = 100;
-                        }
-                        return player == CellTypes.Yellow ? adCount : -adCount;
-                    }
+                        board[i, j],
+                        board[i - 1, j + 1],
+                        board[i - 2, j + 2],
+                        board[i - 3, j + 3]
+                    };
 
-                    //if (board[i, j] == player && board[i - 1, j + 1] == player && board[i - 2, j + 2] == player && board[i - 3, j + 3] == player)
-                    //return player == CellTypes.Yellow ? 10 : -10;
+                    score += EvaluateWindow(board, player, window);
                 }
             }
 
@@ -486,28 +471,40 @@ namespace Connect_4
             {
                 for (int j = 3; j < board.GetLength(1); j++)
                 {
-                    var player = board[i, j];
-                    if (player == CellTypes.Free)
-                        continue;
-
-                    if (board[i, j] == player && board[i - 1, j - 1] == player)
+                    var window = new List<CellTypes>
                     {
-                        int ddCount = 2;
-                        if (board[i - 2, j - 2] == player)
-                        {
-                            ddCount++;
-                            if (board[i - 3, j - 3] == player)
-                                ddCount = 100;
-                        }
-                        return player == CellTypes.Yellow ? ddCount : -ddCount;
-                    }
+                        board[i, j],
+                        board[i - 1, j - 1],
+                        board[i - 2, j - 2],
+                        board[i - 3, j - 3]
+                    };
 
-                    //if (board[i, j] == player && board[i - 1, j - 1] == player && board[i - 2, j - 2] == player && board[i - 3, j - 3] == player)
-                    //return player == CellTypes.Yellow ? 10 : -10;
+                    score += EvaluateWindow(board, player, window);
                 }
             }
 
-            return 0;
+            return score;
+        }
+
+        private int EvaluateWindow(CellTypes[,] board, CellTypes player, List<CellTypes> window)
+        {
+            int score = 0;
+
+            if (window.Count(x => x == player) == 4)
+                score += 10000;
+            else if (window.Count(x => x == player) == 3 && window.Count(x => x == CellTypes.Free) == 1)
+                score += 1000;
+            else if (window.Count(x => x == player) == 2 && window.Count(x => x == CellTypes.Free) == 2)
+                score += 5;
+
+            var opponent = player == CellTypes.Yellow ? CellTypes.Red : CellTypes.Yellow;
+
+            if (window.Count(x => x == opponent) == 4)
+                score -= 10000;
+            else if (window.Count(x => x == opponent) == 3 && window.Count(x => x == CellTypes.Free) == 1)
+                score -= 1000;
+
+            return score;
         }
     }
 }
