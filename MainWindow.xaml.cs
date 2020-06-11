@@ -154,26 +154,32 @@ namespace Connect_4
         private int FindBestColumn(CellTypes[,] board)
         {
             int bestVal = int.MinValue;
-            int bestCol = -1;
+            List<int> bestCol = new List<int> { };
 
             for (int col = 0; col < board.GetLength(1); col++)
             {
                 if (!DropCoin(board, CellTypes.Yellow, col))
                     continue;
 
-                int moveVal = MiniMax(board, 2, true);
+                int moveVal = MiniMax(board, 4, false);
                 //int moveVal = EvalutateBoard(board, CellTypes.Yellow);
 
                 RemoveTopCoin(board, col);
 
                 if (moveVal > bestVal)
                 {
-                    bestCol = col;
+                    bestCol.Clear();
+                    bestCol.Add(col);
                     bestVal = moveVal;
+                }
+                else if (moveVal == bestVal)
+                {
+                    if (!bestCol.Contains(col))
+                        bestCol.Add(col);
                 }
             }
 
-            return bestCol;
+            return bestCol[random.Next(bestCol.Count())];
         }
 
 
@@ -338,18 +344,22 @@ namespace Connect_4
         /// <param name="depth"></param>
         /// <param name="isMax"></param>
         /// <returns></returns>
-        private int MiniMax(CellTypes[,] board, int depth, bool isMax, int alpha = -100, int beta = 100)
+        private int MiniMax(CellTypes[,] board, int depth, bool isMax, int alpha = -1000, int beta = 1000)
         {
-            int score = EvalutateBoard(board, CellTypes.Yellow);
-
-            if (depth == 0 || score == int.MaxValue || score == int.MinValue)
+            var winner = CheckForWinner(board);
+            if (depth == 0 || winner != CellTypes.Free)
             {
-                return score;
+                if (winner == CellTypes.Yellow)
+                    return 1000;
+                else if (winner == CellTypes.Red)
+                    return -1000;
+
+                return EvalutateBoard(board, CellTypes.Yellow);
             }
 
             if (isMax)
             {
-                int maxValue = -100;
+                int maxValue = -1000;
 
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
@@ -370,7 +380,7 @@ namespace Connect_4
             }
             else
             {
-                int minValue = 100;
+                int minValue = 1000;
 
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
@@ -405,13 +415,13 @@ namespace Connect_4
             {
                 var centerCol = new List<CellTypes>();
 
-                centerCol.Add(board[i, 3]);
-                centerCol.Add(board[i + 1, 3]);
-                centerCol.Add(board[i + 2, 3]);
-                centerCol.Add(board[i + 3, 3]);
+                centerCol.Add(board[i, board.GetLength(1) / 2]);
+                centerCol.Add(board[i + 1, board.GetLength(1) / 2]);
+                centerCol.Add(board[i + 2, board.GetLength(1) / 2]);
+                centerCol.Add(board[i + 3, board.GetLength(1) / 2]);
 
                 int centerCount = centerCol.Count(x => x == player);
-                score += centerCount * 3;
+                score += (centerCount * 6);
             }
 
 
@@ -491,18 +501,20 @@ namespace Connect_4
             int score = 0;
 
             if (window.Count(x => x == player) == 4)
-                score += 10000;
+                score += 100;
             else if (window.Count(x => x == player) == 3 && window.Count(x => x == CellTypes.Free) == 1)
-                score += 1000;
+                score += 10;
             else if (window.Count(x => x == player) == 2 && window.Count(x => x == CellTypes.Free) == 2)
                 score += 5;
 
             var opponent = player == CellTypes.Yellow ? CellTypes.Red : CellTypes.Yellow;
 
             if (window.Count(x => x == opponent) == 4)
-                score -= 10000;
+                score -= 100;
             else if (window.Count(x => x == opponent) == 3 && window.Count(x => x == CellTypes.Free) == 1)
-                score -= 1000;
+                score -= 80;
+            else if (window.Count(x => x == opponent) == 2 && window.Count(x => x == CellTypes.Free) == 2)
+                score -= 50;
 
             return score;
         }
