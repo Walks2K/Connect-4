@@ -179,6 +179,19 @@ namespace Connect_4
                 }
             }
 
+            // Fail safe if no columns are returned
+
+            if (bestCol.Count() == 0)
+            {
+                for (int col = 0; col < board.GetLength(1); col++)
+                {
+                    if (!DropCoin(board, CellTypes.Yellow, col))
+                        continue;
+
+                    bestCol.Add(col);
+                }
+            }
+
             return bestCol[random.Next(bestCol.Count())];
         }
 
