@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +32,11 @@ namespace Connect_4
         /// Holds the information about which game is being played (PVP or PVE etc)
         /// </summary>
         private GameTypes mGameType = GameTypes.PlayerVersusPlayer;
+
+        /// <summary>
+        /// Random number generation
+        /// </summary>
+        private Random random = new Random();
         #endregion
         #region Constructor
         public MainWindow()
@@ -96,25 +102,36 @@ namespace Connect_4
             //var row = Grid.GetRow(button);
             var col = Grid.GetColumn(button);
 
-            // Return if cell isn't free
-            for (int i = mCellTypes.GetLength(0) - 1; i >= 0; i--)
+            if (!DropCoin(mCellTypes, mPlayer1Turn ? CellTypes.Red : CellTypes.Yellow, col))
+                return;
+
+            // Toggle turn
+            mPlayer1Turn = !mPlayer1Turn;
+
+            // Check for a winner
+            var Winner = CheckForWinner(mCellTypes);
+
+            if (Winner == CellTypes.Red)
             {
-                if (mCellTypes[i, col] == CellTypes.Free)
+                mGameEnded = true;
+                MessageBox.Show("Red has won!");
+            }
+            else if (Winner == CellTypes.Yellow)
+            {
+                mGameEnded = true;
+                MessageBox.Show("Yellow has won!");
+            }
+
+            if (mGameType == GameTypes.PlayerVersusAI && !mGameEnded)
+            {
+                int bestCol = FindBestColumn(mCellTypes);
+
+                if (bestCol >= 0)
                 {
-                    var CellToFill = Container.Children.Cast<Button>().First(ButtonToMove => Grid.GetRow(ButtonToMove) == i && Grid.GetColumn(ButtonToMove) == col);
-
-                    // Set the cell value based on turn
-                    mCellTypes[i, col] = mPlayer1Turn ? CellTypes.Red : CellTypes.Yellow;
-
-                    // Set the cell colour based on turn
-                    CellToFill.Background = mPlayer1Turn ? Brushes.Red : Brushes.Yellow;
-
-                    // Toggle turn
-                    if (mGameType == GameTypes.PlayerVersusPlayer)
-                        mPlayer1Turn = !mPlayer1Turn;
+                    DropCoin(mCellTypes, CellTypes.Yellow, bestCol);
 
                     // Check for a winner
-                    var Winner = CheckForWinner(mCellTypes);
+                    Winner = CheckForWinner(mCellTypes);
 
                     if (Winner == CellTypes.Red)
                     {
@@ -126,42 +143,96 @@ namespace Connect_4
                         mGameEnded = true;
                         MessageBox.Show("Yellow has won!");
                     }
+                }
 
-                    if (mGameType == GameTypes.PlayerVersusAI && !mGameEnded)
-                    {
-                        Move bestMove = new Move
-                        {
-                            col = -1,
-                            row = -1
-                        };
+                // Toggle turn
+                mPlayer1Turn = !mPlayer1Turn;
+            }
 
-                        MiniMax(mCellTypes, 5, true, bestMove);
+        }
 
-                        if (bestMove.col != -1 && bestMove.row != -1)
-                        {
-                            mCellTypes[bestMove.row, bestMove.col] = CellTypes.Yellow;
-                            var AICell = Container.Children.Cast<Button>().First(AIButtonToMove => Grid.GetRow(AIButtonToMove) == bestMove.row && Grid.GetColumn(AIButtonToMove) == bestMove.col);
-                            AICell.Background = Brushes.Yellow;
+        private int FindBestColumn(CellTypes[,] board)
+        {
+            int bestVal = -10;
+            List<int> bestCol = new List<int>{ };
 
-                            // Check for a winner
-                            Winner = CheckForWinner(mCellTypes);
+            for (int col = 0; col < board.GetLength(1); col++)
+            {
+                if (!DropCoin(board, CellTypes.Yellow, col))
+                    continue;
 
-                            if (Winner == CellTypes.Red)
-                            {
-                                mGameEnded = true;
-                                MessageBox.Show("Red has won!");
-                            }
-                            else if (Winner == CellTypes.Yellow)
-                            {
-                                mGameEnded = true;
-                                MessageBox.Show("Yellow has won!");
-                            }
-                        }
-                    }
+                int moveVal = MiniMax(board, 2, true);
 
-                    return;
+                RemoveTopCoin(board, col);
+
+                if (moveVal > bestVal)
+                {
+                    bestCol.Clear();
+                    bestCol.Add(col);
+                    bestVal = moveVal;
+                }
+                else if (moveVal == bestVal)
+                {
+                    if (!bestCol.Contains(col))
+                        bestCol.Add(col);
                 }
             }
+
+            return bestCol[random.Next(bestCol.Count)];
+        }
+
+
+        /// <summary>
+        /// Drops coin into top slot on given column
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="player"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private bool DropCoin(CellTypes[,] board, CellTypes player, int col)
+        {
+            for (int row = mCellTypes.GetLength(0) - 1; row >= 0; row--)
+            {
+                if (board[row, col] != CellTypes.Free)
+                    continue;
+
+                var CellToFill = Container.Children.Cast<Button>().First(ButtonToMove => Grid.GetRow(ButtonToMove) == row && Grid.GetColumn(ButtonToMove) == col);
+
+                // Set the cell value based on turn
+                mCellTypes[row, col] = player;
+
+                // Set the cell colour based on turn
+                CellToFill.Background = player == CellTypes.Red ? Brushes.Red : Brushes.Yellow;
+
+                return true;
+            }
+
+            return false;
+        }
+        /// <summary>
+        /// Removes the top coin from any given column
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private bool RemoveTopCoin(CellTypes[,] board, int col)
+        {
+            for (int row = 0; row < mCellTypes.GetLength(0); row++)
+            {
+                if (board[row, col] == CellTypes.Free)
+                    continue;
+
+                var CellToFill = Container.Children.Cast<Button>().First(ButtonToMove => Grid.GetRow(ButtonToMove) == row && Grid.GetColumn(ButtonToMove) == col);
+
+                mCellTypes[row, col] = CellTypes.Free;
+
+                // Set the cell colour based on turn
+                CellToFill.Background = Brushes.White;
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -263,6 +334,8 @@ namespace Connect_4
             NewGame();
         }
 
+
+
         /// <summary>
         /// Minimax algorithm used to determine best move
         /// </summary>
@@ -270,96 +343,171 @@ namespace Connect_4
         /// <param name="depth"></param>
         /// <param name="isMax"></param>
         /// <returns></returns>
-        private int MiniMax(CellTypes[,] board, int depth, bool isMax, Move bestMove, int alpha = int.MinValue, int beta = int.MaxValue)
+        private int MiniMax(CellTypes[,] board, int depth, bool isMax, int alpha = -100, int beta = 100)
         {
-            var winner = CheckForWinner(board);
+            int score = EvalutateBoard(board);
 
-            if (depth == 0 || winner != CellTypes.Free)
+            if (depth == 0 || score == 100 || score == -100)
             {
-                if (winner == CellTypes.Yellow)
-                    return int.MaxValue;
-                else if (winner == CellTypes.Red)
-                    return int.MinValue;
-                else
-                    return 0;
+                return score;
             }
 
             if (isMax)
             {
-                int maxValue = int.MinValue;
+                int maxValue = -100;
 
-                for (int j = 0; j < board.GetLength(1); j++)
+                for (int col = 0; col < board.GetLength(1); col++)
                 {
-                    for (int i = board.GetLength(0) - 1; i >= 0; i--)
-                    {
-                        if (board[i, j] != CellTypes.Free)
-                            continue;
+                    if (!DropCoin(board, CellTypes.Yellow, col))
+                        continue;
 
-                        board[i, j] = CellTypes.Yellow;
+                    maxValue = Math.Max(maxValue, MiniMax(board, depth - 1, false));
 
-                        //maxValue = Math.Max(maxValue, MiniMax(board, depth - 1, !isMax, bestMove));
+                    RemoveTopCoin(board, col);
 
-                        int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
+                    alpha = Math.Max(alpha, maxValue);
 
-                        if (newScore > maxValue)
-                        {
-                            maxValue = newScore;
-                            bestMove.row = i;
-                            bestMove.col = j;
-                        }
-
-                        board[i, j] = CellTypes.Free;
-
-                        if (maxValue >= beta)
-                            return maxValue;
-
-                        if (maxValue > alpha)
-                            alpha = maxValue;
-
+                    if (alpha >= beta)
                         break;
-                    }
                 }
 
                 return maxValue;
             }
             else
             {
-                int minValue = int.MaxValue;
+                int minValue = 100;
 
-                for (int j = 0; j < board.GetLength(1); j++)
+                for (int col = 0; col < board.GetLength(1); col++)
                 {
-                    for (int i = board.GetLength(0) - 1; i >= 0; i--)
-                    {
-                        if (board[i, j] != CellTypes.Free)
-                            continue;
+                    if (!DropCoin(board, CellTypes.Red, col))
+                        continue;
 
-                        board[i, j] = CellTypes.Red;
+                    minValue = Math.Min(minValue, MiniMax(board, depth - 1, true));
 
-                        //minValue = Math.Min(minValue, MiniMax(board, depth - 1, !isMax, bestMove));
+                    RemoveTopCoin(board, col);
 
-                        int newScore = MiniMax(board, depth - 1, !isMax, bestMove);
+                    beta = Math.Min(beta, minValue);
 
-                        if (newScore < minValue)
-                        {
-                            minValue = newScore;
-                            bestMove.row = i;
-                            bestMove.col = j;
-                        }
-
-                        board[i, j] = CellTypes.Free;
-
-                        if (minValue <= alpha)
-                            return minValue;
-
-                        if (minValue < beta)
-                            beta = minValue;
-
+                    if (beta <= alpha)
                         break;
-                    }
                 }
 
                 return minValue;
             }
+        }
+
+        /// <summary>
+        /// Evaluate board score
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        private int EvalutateBoard(CellTypes[,] board)
+        {
+            // Horizontal check
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1) - 3; j++)
+                {
+                    var player = board[i, j];
+                    if (player == CellTypes.Free)
+                        continue;
+
+                    if (board[i, j] == player && board[i, j + 1] == player)
+                    {
+                        int hCount = 2;
+                        if (board[i, j + 2] == player)
+                        {
+                            hCount++;
+                            if (board[i, j + 3] == player)
+                                hCount = 100;
+                        }
+                        return player == CellTypes.Yellow ? hCount : -hCount;
+                    }
+
+                    //if (board[i, j] == player && board[i, j + 1] == player && board[i, j + 2] == player && board[i, j + 3] == player)
+                    //return player == CellTypes.Yellow ? 10 : -10;
+                }
+            }
+
+            // Vertical check
+            for (int i = 0; i < board.GetLength(0) - 3; i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    var player = board[i, j];
+                    if (player == CellTypes.Free)
+                        continue;
+
+                    if (board[i, j] == player && board[i + 1, j] == player)
+                    {
+                        int vCount = 2;
+                        if (board[i + 2, j] == player)
+                        {
+                            vCount++;
+                            if (board[i + 3, j] == player)
+                                vCount = 100;
+                        }
+                        return player == CellTypes.Yellow ? vCount : -vCount;
+                    }
+
+                    //if (board[i, j] == player && board[i + 1, j] == player && board[i + 2, j] == player && board[i + 3, j] == player)
+                    //return player == CellTypes.Yellow ? 10 : -10;
+                }
+            }
+
+            // Ascending diagonal check
+            for (int i = 3; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1) - 3; j++)
+                {
+                    var player = board[i, j];
+                    if (player == CellTypes.Free)
+                        continue;
+
+                    if (board[i, j] == player && board[i - 1, j + 1] == player)
+                    {
+                        int adCount = 2;
+                        if (board[i - 2, j + 2] == player)
+                        {
+                            adCount++;
+                            if (board[i - 3, j + 3] == player)
+                                adCount = 100;
+                        }
+                        return player == CellTypes.Yellow ? adCount : -adCount;
+                    }
+
+                    //if (board[i, j] == player && board[i - 1, j + 1] == player && board[i - 2, j + 2] == player && board[i - 3, j + 3] == player)
+                    //return player == CellTypes.Yellow ? 10 : -10;
+                }
+            }
+
+            // Descending diagonal check
+            for (int i = 3; i < board.GetLength(0); i++)
+            {
+                for (int j = 3; j < board.GetLength(1); j++)
+                {
+                    var player = board[i, j];
+                    if (player == CellTypes.Free)
+                        continue;
+
+                    if (board[i, j] == player && board[i - 1, j - 1] == player)
+                    {
+                        int ddCount = 2;
+                        if (board[i - 2, j - 2] == player)
+                        {
+                            ddCount++;
+                            if (board[i - 3, j - 3] == player)
+                                ddCount = 100;
+                        }
+                        return player == CellTypes.Yellow ? ddCount : -ddCount;
+                    }
+
+                    //if (board[i, j] == player && board[i - 1, j - 1] == player && board[i - 2, j - 2] == player && board[i - 3, j - 3] == player)
+                    //return player == CellTypes.Yellow ? 10 : -10;
+                }
+            }
+
+            return 0;
         }
     }
 }
