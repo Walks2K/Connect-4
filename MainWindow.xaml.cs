@@ -153,7 +153,7 @@ namespace Connect_4
 
         private int FindBestColumn(CellTypes[,] board)
         {
-            int bestVal = int.MinValue;
+            int bestVal = -1000;
             List<int> bestCol = new List<int> { };
 
             for (int col = 0; col < board.GetLength(1); col++)
@@ -161,7 +161,7 @@ namespace Connect_4
                 if (!DropCoin(board, CellTypes.Yellow, col))
                     continue;
 
-                int moveVal = MiniMax(board, 4, false);
+                int moveVal = MiniMax(board, 3, false);
                 //int moveVal = EvalutateBoard(board, CellTypes.Yellow);
 
                 RemoveTopCoin(board, col);
@@ -363,9 +363,9 @@ namespace Connect_4
             if (depth == 0 || winner != CellTypes.Free)
             {
                 if (winner == CellTypes.Yellow)
-                    return 1000;
+                    return 1000 + depth;
                 else if (winner == CellTypes.Red)
-                    return -1000;
+                    return -1000 - depth;
 
                 return EvalutateBoard(board, CellTypes.Yellow);
             }
@@ -434,7 +434,7 @@ namespace Connect_4
                 centerCol.Add(board[i + 3, board.GetLength(1) / 2]);
 
                 int centerCount = centerCol.Count(x => x == player);
-                score += (centerCount * 6);
+                score += (centerCount * 3);
             }
 
 
@@ -451,7 +451,7 @@ namespace Connect_4
                         board[i, j + 3]
                     };
 
-                    score += EvaluateWindow(board, player, window);
+                    score += EvaluateWindow(window, player);
                 }
             }
 
@@ -468,7 +468,7 @@ namespace Connect_4
                         board[i + 3, j]
                     };
 
-                    score += EvaluateWindow(board, player, window);
+                    score += EvaluateWindow(window, player);
                 }
             }
 
@@ -485,7 +485,7 @@ namespace Connect_4
                         board[i - 3, j + 3]
                     };
 
-                    score += EvaluateWindow(board, player, window);
+                    score += EvaluateWindow(window, player);
                 }
             }
 
@@ -502,19 +502,19 @@ namespace Connect_4
                         board[i - 3, j - 3]
                     };
 
-                    score += EvaluateWindow(board, player, window);
+                    score += EvaluateWindow(window, player);
                 }
             }
 
             return score;
         }
 
-        private int EvaluateWindow(CellTypes[,] board, CellTypes player, List<CellTypes> window)
+        private int EvaluateWindow(List<CellTypes> window, CellTypes player)
         {
             int score = 0;
 
             if (window.Count(x => x == player) == 4)
-                score += 100;
+                score += int.MaxValue;
             else if (window.Count(x => x == player) == 3 && window.Count(x => x == CellTypes.Free) == 1)
                 score += 10;
             else if (window.Count(x => x == player) == 2 && window.Count(x => x == CellTypes.Free) == 2)
@@ -523,7 +523,7 @@ namespace Connect_4
             var opponent = player == CellTypes.Yellow ? CellTypes.Red : CellTypes.Yellow;
 
             if (window.Count(x => x == opponent) == 4)
-                score -= 100;
+                score -= int.MinValue;
             else if (window.Count(x => x == opponent) == 3 && window.Count(x => x == CellTypes.Free) == 1)
                 score -= 80;
             else if (window.Count(x => x == opponent) == 2 && window.Count(x => x == CellTypes.Free) == 2)
