@@ -79,5 +79,6 @@
             <ComboBoxItem Content="AI versus AI"/>
         </ComboBox>
         <Button Content="New Game" VerticalAlignment="Bottom" Margin="510,2,10,5" Click="Button_Click_1"/>
+        <CheckBox Content="Player 1 Is Red?" HorizontalAlignment="Left" Margin="510,40,0,0" VerticalAlignment="Top" IsChecked="True" Checked="CheckBox_Toggle" Unchecked="CheckBox_Toggle"/>
     </Grid>
 </Window>

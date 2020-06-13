@@ -22,6 +22,11 @@ namespace Connect_4
         /// True if it is player 1's turn
         /// </summary>
         private bool mPlayer1Turn;
+        
+        /// <summary>
+        /// True if player 1 is red
+        /// </summary>
+        private bool mPlayer1IsRed;
 
         /// <summary>
         /// True if the game has ended
@@ -102,7 +107,7 @@ namespace Connect_4
             //var row = Grid.GetRow(button);
             var col = Grid.GetColumn(button);
 
-            if (!DropCoin(mCellTypes, mPlayer1Turn ? CellTypes.Red : CellTypes.Yellow, col))
+            if (!DropCoin(mCellTypes, mPlayer1Turn && mPlayer1IsRed ? CellTypes.Red : CellTypes.Yellow, col))
                 return;
 
             // Toggle turn
@@ -128,7 +133,7 @@ namespace Connect_4
 
                 if (bestCol >= 0)
                 {
-                    DropCoin(mCellTypes, CellTypes.Yellow, bestCol);
+                    DropCoin(mCellTypes, mPlayer1IsRed ? CellTypes.Yellow : CellTypes.Red, bestCol);
 
                     // Check for a winner
                     Winner = CheckForWinner(mCellTypes);
@@ -161,7 +166,7 @@ namespace Connect_4
                 if (!DropCoin(board, CellTypes.Yellow, col))
                     continue;
 
-                int moveVal = MiniMax(board, 3, false);
+                int moveVal = MiniMax(board, 4, false, true);
                 //int moveVal = EvalutateBoard(board, CellTypes.Yellow);
 
                 RemoveTopCoin(board, col);
@@ -357,7 +362,7 @@ namespace Connect_4
         /// <param name="depth"></param>
         /// <param name="isMax"></param>
         /// <returns></returns>
-        private int MiniMax(CellTypes[,] board, int depth, bool isMax, int alpha = -1000, int beta = 1000)
+        private int MiniMax(CellTypes[,] board, int depth, bool isMax, bool isYellow, int alpha = -1000, int beta = 1000)
         {
             var winner = CheckForWinner(board);
             if (depth == 0 || winner != CellTypes.Free)
@@ -376,10 +381,10 @@ namespace Connect_4
 
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
-                    if (!DropCoin(board, CellTypes.Yellow, col))
+                    if (!DropCoin(board, isYellow ? CellTypes.Yellow : CellTypes.Red, col))
                         continue;
 
-                    maxValue = Math.Max(maxValue, MiniMax(board, depth - 1, false));
+                    maxValue = Math.Max(maxValue, MiniMax(board, depth - 1, false, isYellow));
 
                     RemoveTopCoin(board, col);
 
@@ -397,10 +402,10 @@ namespace Connect_4
 
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
-                    if (!DropCoin(board, CellTypes.Red, col))
+                    if (!DropCoin(board, isYellow ? CellTypes.Red : CellTypes.Yellow, col))
                         continue;
 
-                    minValue = Math.Min(minValue, MiniMax(board, depth - 1, true));
+                    minValue = Math.Min(minValue, MiniMax(board, depth - 1, true, isYellow));
 
                     RemoveTopCoin(board, col);
 
@@ -527,9 +532,16 @@ namespace Connect_4
             else if (window.Count(x => x == opponent) == 3 && window.Count(x => x == CellTypes.Free) == 1)
                 score -= 80;
             else if (window.Count(x => x == opponent) == 2 && window.Count(x => x == CellTypes.Free) == 2)
-                score -= 50;
+                score -= 5;
 
             return score;
+        }
+
+        private void CheckBox_Toggle(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            mPlayer1IsRed = (bool)checkBox.IsChecked;
+            NewGame();
         }
     }
 }
