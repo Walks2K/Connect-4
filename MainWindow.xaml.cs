@@ -110,9 +110,6 @@ namespace Connect_4
             if (!DropCoin(mCellTypes, mPlayer1Turn && mPlayer1IsRed ? CellTypes.Red : CellTypes.Yellow, col))
                 return;
 
-            // Toggle turn
-            mPlayer1Turn = !mPlayer1Turn;
-
             // Check for a winner
             var Winner = CheckForWinner(mCellTypes);
 
@@ -126,6 +123,9 @@ namespace Connect_4
                 mGameEnded = true;
                 MessageBox.Show("Yellow has won!");
             }
+            else
+                // Toggle turn
+                mPlayer1Turn = !mPlayer1Turn;
 
             if (mGameType == GameTypes.PlayerVersusAI && !mGameEnded)
             {
