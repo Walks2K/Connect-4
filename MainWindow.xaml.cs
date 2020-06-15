@@ -13,6 +13,7 @@ namespace Connect_4
     public partial class MainWindow : Window
     {
         #region Private Members
+
         /// <summary>
         /// Holds current state of cells on board
         /// </summary>
@@ -22,7 +23,7 @@ namespace Connect_4
         /// True if it is player 1's turn
         /// </summary>
         private bool mPlayer1Turn;
-        
+
         /// <summary>
         /// True if player 1 is red
         /// </summary>
@@ -42,8 +43,11 @@ namespace Connect_4
         /// Random number generation
         /// </summary>
         private Random random = new Random();
-        #endregion
+
+        #endregion Private Members
+
         #region Constructor
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,7 +55,7 @@ namespace Connect_4
             NewGame();
         }
 
-        #endregion
+        #endregion Constructor
 
         /// <summary>
         /// Setup a new game
@@ -153,7 +157,6 @@ namespace Connect_4
                 // Toggle turn
                 mPlayer1Turn = !mPlayer1Turn;
             }
-
         }
 
         private int FindBestColumn(CellTypes[,] board)
@@ -200,7 +203,6 @@ namespace Connect_4
             return bestCol[random.Next(bestCol.Count())];
         }
 
-
         /// <summary>
         /// Drops coin into top slot on given column
         /// </summary>
@@ -228,6 +230,7 @@ namespace Connect_4
 
             return false;
         }
+
         /// <summary>
         /// Removes the top coin from any given column
         /// </summary>
@@ -353,8 +356,6 @@ namespace Connect_4
             NewGame();
         }
 
-
-
         /// <summary>
         /// Minimax algorithm used to determine best move
         /// </summary>
@@ -441,7 +442,6 @@ namespace Connect_4
                 int centerCount = centerCol.Count(x => x == player);
                 score += (centerCount * 3);
             }
-
 
             // Horizontal check
             for (int i = 0; i < board.GetLength(0); i++)

@@ -25,60 +25,60 @@
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="0" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="0" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="0" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="0" Click="Button_Click" />
 
-            <Button Grid.Column="0" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="1" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="1" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="1" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="1" Click="Button_Click" />
 
-            <Button Grid.Column="0" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="2" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="2" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="2" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="2" Click="Button_Click" />
 
-            <Button Grid.Column="0" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="3" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="3" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="3" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="3" Click="Button_Click" />
 
-            <Button Grid.Column="0" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="4" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="4" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="4" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="4" Click="Button_Click" />
 
-            <Button Grid.Column="0" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="1" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="2" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="3" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="4" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="5" Grid.Row="5" Click="Button_Click"/>
-            <Button Grid.Column="6" Grid.Row="5" Click="Button_Click"/>
+            <Button Grid.Column="0" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="1" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="2" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="3" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="4" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="5" Grid.Row="5" Click="Button_Click" />
+            <Button Grid.Column="6" Grid.Row="5" Click="Button_Click" />
         </Grid>
         <ComboBox Margin="510,10,10,0" IsSynchronizedWithCurrentItem="False" VerticalAlignment="Top" SelectionChanged="ComboBox_SelectionChanged">
-            <ComboBoxItem Content="Player versus Player" IsSelected="True"/>
-            <ComboBoxItem Content="Player versus AI"/>
-            <ComboBoxItem Content="AI versus AI"/>
+            <ComboBoxItem Content="Player versus Player" IsSelected="True" />
+            <ComboBoxItem Content="Player versus AI" />
+            <ComboBoxItem Content="AI versus AI" />
         </ComboBox>
-        <Button Content="New Game" VerticalAlignment="Bottom" Margin="510,2,10,5" Click="Button_Click_1"/>
-        <CheckBox Content="Player 1 Is Red?" HorizontalAlignment="Left" Margin="510,40,0,0" VerticalAlignment="Top" IsChecked="True" Checked="CheckBox_Toggle" Unchecked="CheckBox_Toggle"/>
+        <Button Content="New Game" VerticalAlignment="Bottom" Margin="510,2,10,5" Click="Button_Click_1" />
+        <CheckBox Content="Player 1 Is Red?" HorizontalAlignment="Left" Margin="510,40,0,0" VerticalAlignment="Top" IsChecked="True" Checked="CheckBox_Toggle" Unchecked="CheckBox_Toggle" />
     </Grid>
 </Window>
