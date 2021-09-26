@@ -11,3 +11,5 @@ C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect_4.Properties.Resources.r
 C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.csproj.GenerateResource.cache
 C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.exe
 C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.pdb
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.csproj.AssemblyReference.cache
+C:\Users\Walks\source\repos\Connect 4\obj\Debug\Connect 4.csproj.CoreCompileInputs.cache

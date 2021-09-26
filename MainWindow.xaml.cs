@@ -88,6 +88,38 @@ namespace Connect_4
 
             // Ensure game isn't finished
             mGameEnded = false;
+
+            if (mGameType == GameTypes.AIVersusAI && !mGameEnded)
+            {
+                while (!mGameEnded)
+                {
+                    int bestCol = FindBestColumn(mCellTypes);
+
+                    if (bestCol >= 0)
+                    {
+                        DropCoin(mCellTypes, mPlayer1Turn ? CellTypes.Red : CellTypes.Yellow, bestCol);
+
+                        System.Threading.Thread.Sleep(500);
+
+                        // Check for a winner
+                        var Winner = CheckForWinner(mCellTypes);
+
+                        if (Winner == CellTypes.Red)
+                        {
+                            mGameEnded = true;
+                            MessageBox.Show("Red has won!");
+                        }
+                        else if (Winner == CellTypes.Yellow)
+                        {
+                            mGameEnded = true;
+                            MessageBox.Show("Yellow has won!");
+                        }
+                    }
+
+                    // Toggle turn
+                    mPlayer1Turn = !mPlayer1Turn;
+                }
+            }
         }
 
         /// <summary>
